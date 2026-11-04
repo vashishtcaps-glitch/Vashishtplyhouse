@@ -29,7 +29,7 @@ export const InvoicePrintA4: React.FC<InvoicePrintA4Props> = ({ invoice, hsnSumm
   return (
     <div
       id="invoice-print-area"
-      className="bg-white text-black font-sans text-[11px] leading-tight select-text"
+      className="printable-invoice bg-white text-black font-sans text-[11px] leading-tight select-text"
       style={{
         width: '210mm',
         minHeight: '297mm',
@@ -221,7 +221,7 @@ export const InvoicePrintA4: React.FC<InvoicePrintA4Props> = ({ invoice, hsnSumm
       </div>
 
       {/* Itemized Table (Exact Columns) */}
-      <table className="w-full border-collapse border-b border-black text-[10px]">
+      <table className="printable-invoice-table w-full border-collapse border-b border-black text-[10px]">
         <thead>
           <tr className="border-b border-black bg-neutral-100 text-center font-bold">
             <th className="border-r border-black py-1 px-1 w-[35px]">Sl No.</th>
@@ -349,7 +349,7 @@ export const InvoicePrintA4: React.FC<InvoicePrintA4Props> = ({ invoice, hsnSumm
         <div className="text-[9px] font-bold uppercase tracking-wider text-neutral-700 mb-1">
           Tax Analysis / HSN/SAC Breakdown
         </div>
-        <table className="w-full border-collapse border border-black text-[9.5px]">
+        <table className="printable-invoice-table w-full border-collapse border border-black text-[9.5px]">
           <thead>
             <tr className="bg-neutral-100 border-b border-black font-bold text-center">
               <th className="border-r border-black p-1 w-[70px]">HSN/SAC</th>

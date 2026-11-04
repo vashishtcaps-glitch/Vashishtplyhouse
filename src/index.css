@@ -37,17 +37,14 @@
   background: #475569;
 }
 
-/* Dedicated Strict CSS Print Rules (@media print) for A4 Tally Tax Invoice */
+/* Foolproof A4 Print CSS Architecture */
 @page {
   size: A4 portrait;
-  margin: 6mm 8mm; /* standard minimal printer margins */
+  margin: 5mm;
 }
 
 @media print {
-  /* 1. Hide every single UI element except the actual invoice sheet */
-  body * {
-    visibility: hidden !important;
-  }
+  /* Hide the rest of the web app and backdrops */
   body, html {
     background: #ffffff !important;
     background-color: #ffffff !important;
@@ -55,48 +52,65 @@
     margin: 0 !important;
     padding: 0 !important;
     width: 100% !important;
+    overflow: visible !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
+  
+  /* Hide everything except the invoice modal container */
+  header, nav, button, .no-print, [role="dialog"] > div:first-child {
+    display: none !important;
+  }
 
-  /* 2. Position only the printable A4 container */
-  #invoice-print-area,
-  #invoice-print-area *,
-  #printable-invoice,
-  #printable-invoice * {
+  /* Make sure the modal overlay doesn't obscure or add dark backgrounds */
+  .modal-backdrop {
+    position: static !important;
+    display: block !important;
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    inset: auto !important;
+    width: 100% !important;
+    overflow: visible !important;
+  }
+
+  /* Make sure the printable invoice element and all its children are fully visible */
+  .printable-invoice, .printable-invoice * {
     visibility: visible !important;
   }
 
-  #invoice-print-area,
-  #printable-invoice {
+  table.printable-invoice-table, table.printable-invoice-table * {
+    display: revert !important; /* Preserve table formatting */
+  }
+
+  .printable-invoice {
     display: block !important;
-    position: absolute !important;
-    left: 0 !important;
-    top: 0 !important;
+    position: static !important;
     width: 100% !important;
     max-width: 100% !important;
-    min-height: auto !important;
     margin: 0 !important;
     padding: 0 !important;
     background: #ffffff !important;
     background-color: #ffffff !important;
+    color: #000000 !important;
     box-shadow: none !important;
     border: 1px solid #000000 !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
     transform: none !important;
   }
 
-  /* 3. Hide modal dark backdrop, scrollbars, preview header bars, zoom controls, and close buttons */
-  .modal-backdrop,
-  .no-print,
-  header,
-  nav,
-  button {
-    display: none !important;
-    visibility: hidden !important;
-    background: transparent !important;
+  /* Preserve grid and flex layouts inside the invoice */
+  .printable-invoice [class*="grid"] {
+    display: grid !important;
   }
 
-  /* Avoid unwanted page breaks */
+  .printable-invoice [class*="flex"] {
+    display: flex !important;
+  }
+
+  /* Prevent page breaks inside critical sections */
   .avoid-break {
     page-break-inside: avoid !important;
     break-inside: avoid !important;
