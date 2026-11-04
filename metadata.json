@@ -1,0 +1,6 @@
+{
+  "name": "M/s Vashisht Ply House - GST Billing & Invoicing",
+  "description": "GST Billing & Tax Invoicing application specifically designed for plywood, timber, hardware, and laminates with dynamic square-foot area calculation, Tally-exact A4 print, and local persistence.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
