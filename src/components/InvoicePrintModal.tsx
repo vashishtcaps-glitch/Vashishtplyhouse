@@ -39,7 +39,7 @@ export const InvoicePrintModal: React.FC<InvoicePrintModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col bg-slate-950/90 backdrop-blur-md">
+    <div className="fixed inset-0 z-50 flex flex-col bg-slate-950/90 backdrop-blur-md modal-backdrop print:bg-white print:p-0 print:m-0 print:static print:inset-auto">
       {/* Modal Toolbar (Hidden during print) */}
       <div className="no-print bg-slate-900 border-b border-slate-800 px-4 md:px-6 py-3 flex items-center justify-between gap-4 shrink-0 shadow-sm">
         <div className="flex items-center gap-3">
@@ -115,14 +115,14 @@ export const InvoicePrintModal: React.FC<InvoicePrintModalProps> = ({
       </div>
 
       {/* Modal Body: Scrollable Document View */}
-      <div className="flex-1 overflow-auto p-4 md:p-8 flex justify-center items-start bg-neutral-900/95">
+      <div className="flex-1 overflow-auto p-4 md:p-8 flex justify-center items-start bg-neutral-900/95 print:bg-white print:p-0 print:m-0 print:overflow-visible print:block">
         <div
           style={{
             transform: `scale(${zoom / 100})`,
             transformOrigin: 'top center',
             transition: 'transform 0.15s ease-out',
           }}
-          className="shadow-2xl my-2"
+          className="shadow-2xl my-2 print:shadow-none print:m-0 print:p-0 print:transform-none"
         >
           <InvoicePrintA4 invoice={invoice} hsnSummary={hsnSummary} />
         </div>

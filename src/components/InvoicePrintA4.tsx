@@ -28,7 +28,7 @@ export const InvoicePrintA4: React.FC<InvoicePrintA4Props> = ({ invoice, hsnSumm
 
   return (
     <div
-      id="printable-invoice"
+      id="invoice-print-area"
       className="bg-white text-black font-sans text-[11px] leading-tight select-text"
       style={{
         width: '210mm',

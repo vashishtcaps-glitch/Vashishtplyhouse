@@ -37,53 +37,69 @@
   background: #475569;
 }
 
-/* Exact A4 Print Styles matching Tally Tax Invoice specifications */
-@media print {
-  @page {
-    size: A4 portrait;
-    margin: 6mm 8mm 6mm 8mm;
-  }
+/* Dedicated Strict CSS Print Rules (@media print) for A4 Tally Tax Invoice */
+@page {
+  size: A4 portrait;
+  margin: 6mm 8mm; /* standard minimal printer margins */
+}
 
-  html, body {
+@media print {
+  /* 1. Hide every single UI element except the actual invoice sheet */
+  body * {
+    visibility: hidden !important;
+  }
+  body, html {
+    background: #ffffff !important;
     background-color: #ffffff !important;
     color: #000000 !important;
     margin: 0 !important;
     padding: 0 !important;
-    font-size: 11px !important;
-    line-height: 1.25 !important;
+    width: 100% !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
 
-  .no-print {
-    display: none !important;
+  /* 2. Position only the printable A4 container */
+  #invoice-print-area,
+  #invoice-print-area *,
+  #printable-invoice,
+  #printable-invoice * {
+    visibility: visible !important;
   }
 
-  .print-only {
-    display: block !important;
-  }
-
+  #invoice-print-area,
   #printable-invoice {
     display: block !important;
-    position: static !important;
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
     width: 100% !important;
     max-width: 100% !important;
+    min-height: auto !important;
     margin: 0 !important;
     padding: 0 !important;
-    border: 1px solid #000000 !important;
-    box-shadow: none !important;
     background: #ffffff !important;
-    color: #000000 !important;
-  }
-
-  #printable-invoice * {
-    color: #000000 !important;
-    border-color: #000000 !important;
+    background-color: #ffffff !important;
     box-shadow: none !important;
+    border: 1px solid #000000 !important;
+    transform: none !important;
   }
 
+  /* 3. Hide modal dark backdrop, scrollbars, preview header bars, zoom controls, and close buttons */
+  .modal-backdrop,
+  .no-print,
+  header,
+  nav,
+  button {
+    display: none !important;
+    visibility: hidden !important;
+    background: transparent !important;
+  }
+
+  /* Avoid unwanted page breaks */
   .avoid-break {
     page-break-inside: avoid !important;
     break-inside: avoid !important;
   }
 }
+
