@@ -1,4 +1,11 @@
-import { Invoice, BankDetails, DEFAULT_BANK_DETAILS, VASHISHT_FIRM_PROFILE } from '../types/invoice';
+import {
+  Invoice,
+  BankDetails,
+  DEFAULT_BANK_DETAILS,
+  FirmProfile,
+  VASHISHT_FIRM_PROFILE,
+  CatalogProduct,
+} from '../types/invoice';
 import { calculateInvoiceTotals } from './calculations';
 import { numberToWordsINR, taxAmountToWordsINR } from './numberToWords';
 
@@ -8,6 +15,7 @@ const STORE_INVOICES = 'invoices';
 const STORE_SETTINGS = 'settings';
 const LOCAL_STORAGE_KEY = 'vph_invoices_backup';
 const LOCAL_SETTINGS_KEY = 'vph_settings_backup';
+const LOCAL_CATALOG_KEY = 'vph_product_catalog_v1';
 
 function openDatabase(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
@@ -183,31 +191,125 @@ function getInvoicesFromLocalStorage(): Invoice[] {
 }
 
 export interface AppSettings {
+  firmProfile: FirmProfile;
   bankDetails: BankDetails;
   invoicePrefix: string;
   defaultTerms: string[];
+  defaultPricingMode: 'INCLUSIVE' | 'EXCLUSIVE';
 }
 
 export const DEFAULT_SETTINGS: AppSettings = {
+  firmProfile: VASHISHT_FIRM_PROFILE,
   bankDetails: DEFAULT_BANK_DETAILS,
   invoicePrefix: 'VPH/26-27/',
   defaultTerms: [
     'Goods once sold will not be taken back.',
     'Subject to Una (H.P.) jurisdiction only.',
   ],
+  defaultPricingMode: 'INCLUSIVE',
 };
+
+export const DEFAULT_CATALOG_PRODUCTS: CatalogProduct[] = [
+  // Fasteners & Nails (HSN 7317 / 7318)
+  { id: 'prod_1', name: '3" Screw', hsn: '7318', unit: 'PKT', rate: 320.00, isTaxInclusive: true, taxRate: 18, category: 'Fasteners & Nails' },
+  { id: 'prod_2', name: 'Screw 6x149', hsn: '7318', unit: 'PCS', rate: 220.00, isTaxInclusive: true, taxRate: 18, category: 'Fasteners & Nails' },
+  { id: 'prod_3', name: 'Screw 6x32', hsn: '7318', unit: 'PCS', rate: 400.00, isTaxInclusive: true, taxRate: 18, category: 'Fasteners & Nails' },
+  { id: 'prod_4', name: "Screw Self 1'", hsn: '7318', unit: 'PCS', rate: 350.00, isTaxInclusive: true, taxRate: 18, category: 'Fasteners & Nails' },
+  { id: 'prod_5', name: '19 No 3/4" Nail', hsn: '7317', unit: 'KG', rate: 120.00, isTaxInclusive: true, taxRate: 18, category: 'Fasteners & Nails' },
+  { id: 'prod_6', name: '17 No Nail 1½"', hsn: '7317', unit: 'KG', rate: 130.00, isTaxInclusive: true, taxRate: 18, category: 'Fasteners & Nails' },
+
+  // Hardware & Hinges (HSN 8302)
+  { id: 'prod_7', name: 'Hinges 0° Crank Onsys - Hettich', hsn: '8302', unit: 'SET', rate: 225.00, isTaxInclusive: true, taxRate: 18, category: 'Hardware & Hinges' },
+  { id: 'prod_8', name: '15° Crank Onsys - Hettich', hsn: '8302', unit: 'SET', rate: 280.00, isTaxInclusive: true, taxRate: 18, category: 'Hardware & Hinges' },
+  { id: 'prod_9', name: 'Push Catcher Premium', hsn: '8302', unit: 'PCS', rate: 300.00, isTaxInclusive: true, taxRate: 18, category: 'Hardware & Hinges' },
+  { id: 'prod_10', name: 'L Button', hsn: '8302', unit: 'PCS', rate: 25.00, isTaxInclusive: true, taxRate: 18, category: 'Hardware & Hinges' },
+  { id: 'prod_11', name: 'Kabja (Hinges) 1½" x 3/4" x 7\'', hsn: '8302', unit: 'PCS', rate: 250.00, isTaxInclusive: true, taxRate: 18, category: 'Hardware & Hinges' },
+  { id: 'prod_12', name: 'Hinges Double Action', hsn: '8302', unit: 'PCS', rate: 650.00, isTaxInclusive: true, taxRate: 18, category: 'Hardware & Hinges' },
+  { id: 'prod_13', name: 'Hinges 5x12', hsn: '8302', unit: 'PCS', rate: 80.00, isTaxInclusive: true, taxRate: 18, category: 'Hardware & Hinges' },
+
+  // Plywood, Timber & Veneer (HSN 4412 / 4408 / 4409)
+  { id: 'prod_14', name: '18mm Century MR Ply 8x4', hsn: '4412', unit: 'SQFT', rate: 110.00, isTaxInclusive: true, taxRate: 18, category: 'Plywood, Timber & Veneer' },
+  { id: 'prod_15', name: '6mm Century MR Ply 8x4', hsn: '4412', unit: 'SQFT', rate: 52.00, isTaxInclusive: true, taxRate: 18, category: 'Plywood, Timber & Veneer' },
+  { id: 'prod_16', name: 'Century Veneer Oak Q 8x4', hsn: '4408', unit: 'SQFT', rate: 120.00, isTaxInclusive: false, taxRate: 18, category: 'Plywood, Timber & Veneer' },
+  { id: 'prod_17', name: 'Imported Timber Thermo Pine 140x42mm', hsn: '44092990', unit: 'PCS', rate: 2880.00, isTaxInclusive: false, taxRate: 18, category: 'Plywood, Timber & Veneer' },
+
+  // Adhesives & Chemicals (HSN 3506)
+  { id: 'prod_18', name: 'Fevicol Marine 20 Kg', hsn: '3506', unit: 'DRUM', rate: 6500.00, isTaxInclusive: true, taxRate: 18, category: 'Adhesives & Chemicals' },
+  { id: 'prod_19', name: 'Hetax 1 Ltr', hsn: '3506', unit: 'LTR', rate: 550.00, isTaxInclusive: true, taxRate: 18, category: 'Adhesives & Chemicals' },
+
+  // Laminates & Plastics (HSN 4823 / 3919 / 3920 / 3926)
+  { id: 'prod_20', name: '.8mm Sunmica 8106 SF', hsn: '4823', unit: 'SHEET', rate: 850.00, isTaxInclusive: false, taxRate: 18, category: 'Laminates & Plastics' },
+  { id: 'prod_21', name: '1mm Sunmica 3004', hsn: '4823', unit: 'SHEET', rate: 1350.00, isTaxInclusive: false, taxRate: 18, category: 'Laminates & Plastics' },
+  { id: 'prod_22', name: 'Masking Tape', hsn: '3919', unit: 'PKT', rate: 150.00, isTaxInclusive: true, taxRate: 18, category: 'Laminates & Plastics' },
+  { id: 'prod_23', name: 'PVC Tape 100 Smt', hsn: '3920', unit: 'PCS', rate: 550.00, isTaxInclusive: false, taxRate: 18, category: 'Laminates & Plastics' },
+  { id: 'prod_24', name: 'Gitti PVC 6mm', hsn: '3926', unit: 'PKT', rate: 40.00, isTaxInclusive: true, taxRate: 18, category: 'Laminates & Plastics' },
+
+  // Logistics & Services (HSN 996511)
+  { id: 'prod_25', name: 'Cartage / Delivery Charges', hsn: '996511', unit: 'TRIP', rate: 1000.00, isTaxInclusive: false, taxRate: 18, category: 'Logistics & Services' },
+  { id: 'prod_26', name: 'Freight Charges (Ex-Delhi)', hsn: '996511', unit: 'TRIP', rate: 8000.00, isTaxInclusive: false, taxRate: 18, category: 'Logistics & Services' },
+];
+
+export function getCatalogProducts(): CatalogProduct[] {
+  try {
+    const raw = localStorage.getItem(LOCAL_CATALOG_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    }
+  } catch (err) {
+    console.warn('Failed to parse catalog from localStorage', err);
+  }
+  // Initialize with defaults if empty
+  try {
+    localStorage.setItem(LOCAL_CATALOG_KEY, JSON.stringify(DEFAULT_CATALOG_PRODUCTS));
+  } catch {}
+  return DEFAULT_CATALOG_PRODUCTS;
+}
+
+export function saveCatalogProduct(product: CatalogProduct): CatalogProduct[] {
+  const current = getCatalogProducts();
+  const idx = current.findIndex((p) => p.id === product.id);
+  let updated: CatalogProduct[];
+  if (idx >= 0) {
+    updated = [...current];
+    updated[idx] = product;
+  } else {
+    updated = [product, ...current];
+  }
+  localStorage.setItem(LOCAL_CATALOG_KEY, JSON.stringify(updated));
+  return updated;
+}
+
+export function deleteCatalogProduct(id: string): CatalogProduct[] {
+  const current = getCatalogProducts();
+  const updated = current.filter((p) => p.id !== id);
+  localStorage.setItem(LOCAL_CATALOG_KEY, JSON.stringify(updated));
+  return updated;
+}
+
+export function resetCatalogToDefaults(): CatalogProduct[] {
+  localStorage.setItem(LOCAL_CATALOG_KEY, JSON.stringify(DEFAULT_CATALOG_PRODUCTS));
+  return DEFAULT_CATALOG_PRODUCTS;
+}
 
 export async function getAppSettings(): Promise<AppSettings> {
   try {
     const raw = localStorage.getItem(LOCAL_SETTINGS_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
-      // Migrate if old placeholder SBI details were stored
+      if (!parsed.firmProfile) {
+        parsed.firmProfile = VASHISHT_FIRM_PROFILE;
+      }
       if (!parsed.bankDetails || parsed.bankDetails.bankName === 'State Bank of India') {
         parsed.bankDetails = DEFAULT_BANK_DETAILS;
       }
       if (!parsed.defaultTerms || parsed.defaultTerms.length > 2) {
         parsed.defaultTerms = DEFAULT_SETTINGS.defaultTerms;
+      }
+      if (!parsed.defaultPricingMode) {
+        parsed.defaultPricingMode = 'INCLUSIVE';
       }
       return parsed;
     }

@@ -37,10 +37,30 @@
   background: #475569;
 }
 
-/* Foolproof A4 Print CSS Architecture */
+/* Sleek dark scrollbar for dropdown menus */
+.custom-hsn-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #334155 #090d16;
+}
+.custom-hsn-scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+.custom-hsn-scrollbar::-webkit-scrollbar-track {
+  background: #090d16;
+  border-radius: 4px;
+}
+.custom-hsn-scrollbar::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 4px;
+}
+.custom-hsn-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #10b981;
+}
+
+/* Foolproof Statutory 3-Page A4 Print CSS Architecture */
 @page {
   size: A4 portrait;
-  margin: 5mm;
+  margin: 8mm 10mm;
 }
 
 @media print {
@@ -49,6 +69,7 @@
     background: #ffffff !important;
     background-color: #ffffff !important;
     color: #000000 !important;
+    font-family: Arial, Helvetica, sans-serif !important;
     margin: 0 !important;
     padding: 0 !important;
     width: 100% !important;
@@ -57,12 +78,12 @@
     print-color-adjust: exact !important;
   }
   
-  /* Hide everything except the invoice modal container */
-  header, nav, button, .no-print, [role="dialog"] > div:first-child {
+  /* Hide UI elements, navigation, toolbars, buttons during print */
+  .no-print, header, nav, .preview-toolbar, button, [role="dialog"] > div:first-child {
     display: none !important;
   }
 
-  /* Make sure the modal overlay doesn't obscure or add dark backgrounds */
+  /* Unset modal backdrop constraints in print mode */
   .modal-backdrop {
     position: static !important;
     display: block !important;
@@ -75,42 +96,45 @@
     overflow: visible !important;
   }
 
-  /* Make sure the printable invoice element and all its children are fully visible */
-  .printable-invoice, .printable-invoice * {
-    visibility: visible !important;
-  }
-
-  table.printable-invoice-table, table.printable-invoice-table * {
-    display: revert !important; /* Preserve table formatting */
-  }
-
-  .printable-invoice {
+  /* Exact match 3-page statutory A4 print sheet */
+  .print-invoice-sheet {
     display: block !important;
-    position: static !important;
+    page-break-after: always !important;
+    break-after: page !important;
     width: 100% !important;
-    max-width: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
+    height: 98vh !important;
+    max-height: 282mm !important;
+    box-sizing: border-box !important;
+    border: 1.5px solid #000000 !important;
+    margin-bottom: 0 !important;
+    padding: 6px !important;
+    font-size: 11px !important;
     background: #ffffff !important;
     background-color: #ffffff !important;
     color: #000000 !important;
     box-shadow: none !important;
-    border: 1px solid #000000 !important;
-    page-break-inside: avoid !important;
-    break-inside: avoid !important;
     transform: none !important;
   }
 
+  .print-invoice-sheet:last-child {
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+  }
+
+  /* Ensure table elements display properly */
+  table.printable-invoice-table, table.printable-invoice-table * {
+    display: revert !important;
+  }
+
   /* Preserve grid and flex layouts inside the invoice */
-  .printable-invoice [class*="grid"] {
+  .print-invoice-sheet [class*="grid"] {
     display: grid !important;
   }
 
-  .printable-invoice [class*="flex"] {
+  .print-invoice-sheet [class*="flex"] {
     display: flex !important;
   }
 
-  /* Prevent page breaks inside critical sections */
   .avoid-break {
     page-break-inside: avoid !important;
     break-inside: avoid !important;

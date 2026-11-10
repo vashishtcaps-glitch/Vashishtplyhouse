@@ -32,18 +32,32 @@ export function calculateItemRow(
   let rateInclusive = Number(item.rateInclusive) || 0;
 
   if (isTaxInclusive) {
-    // Rate is entered inclusive of tax -> back-calculate taxable rate
+    // Case A: Rate is GST INCLUSIVE (MRP / Final customer rate given)
+    // If rateInclusive is set, compute base taxable rate: rate = rateInclusive / (1 + taxRate/100)
     if (rateInclusive > 0) {
       rate = Number((rateInclusive / (1 + taxRate / 100)).toFixed(2));
     } else if (rate > 0) {
       rateInclusive = Number((rate * (1 + taxRate / 100)).toFixed(2));
+      rate = Number((rateInclusive / (1 + taxRate / 100)).toFixed(2));
     }
   } else {
-    // Rate is taxable -> compute inclusive rate
+    // Case B: Rate is GST EXCLUSIVE (+ GST Extra)
+    // Base rate is the entered rate; inclusive rate is calculated for display
     rateInclusive = Number((rate * (1 + taxRate / 100)).toFixed(2));
   }
 
   const taxableAmount = Number((quantity * rate).toFixed(2));
+
+  // Determine total line item tax
+  let itemTotalTax = 0;
+  if (isTaxInclusive && rateInclusive > 0) {
+    // Total Tax = (Inclusive Rate * Quantity) - Taxable Value
+    const grossInclusive = Number((rateInclusive * quantity).toFixed(2));
+    itemTotalTax = Number((grossInclusive - taxableAmount).toFixed(2));
+  } else {
+    // Total Tax = Taxable Value * (Tax Rate / 100)
+    itemTotalTax = Number(((taxableAmount * taxRate) / 100).toFixed(2));
+  }
 
   // Smart GST State Logic:
   // Seller State = "02" (Himachal Pradesh)
@@ -61,19 +75,19 @@ export function calculateItemRow(
   if (isIntraState) {
     cgstRate = taxRate / 2;
     sgstRate = taxRate / 2;
-    cgstAmount = Number(((taxableAmount * cgstRate) / 100).toFixed(2));
-    sgstAmount = Number(((taxableAmount * sgstRate) / 100).toFixed(2));
+    cgstAmount = Number((itemTotalTax / 2).toFixed(2));
+    sgstAmount = Number((itemTotalTax - cgstAmount).toFixed(2));
   } else {
     igstRate = taxRate;
-    igstAmount = Number(((taxableAmount * igstRate) / 100).toFixed(2));
+    igstAmount = itemTotalTax;
   }
 
-  const totalAmount = Number((taxableAmount + cgstAmount + sgstAmount + igstAmount).toFixed(2));
+  const totalAmount = Number((taxableAmount + itemTotalTax).toFixed(2));
 
   return {
     id: item.id || `item_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
     description: item.description || '',
-    hsn: item.hsn || '4412',
+    hsn: item.hsn !== undefined ? item.hsn : '',
     isPlywood,
     lengthFt: isPlywood ? lengthFt : undefined,
     widthFt: isPlywood ? widthFt : undefined,
@@ -130,7 +144,7 @@ export function calculateInvoiceTotals(items: InvoiceItem[], buyerStateCode: str
   // Build HSN summary table
   const hsnMap: { [hsn: string]: HSNSummaryRow } = {};
   recalculatedItems.forEach(item => {
-    const hsnKey = item.hsn || '4412';
+    const hsnKey = item.hsn?.trim() || 'General';
     if (!hsnMap[hsnKey]) {
       hsnMap[hsnKey] = {
         hsn: hsnKey,

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import {
   Invoice,
   VASHISHT_FIRM_PROFILE,
+  CatalogProduct,
 } from './types/invoice';
 import { calculateInvoiceTotals } from './utils/calculations';
 import { numberToWordsINR, taxAmountToWordsINR } from './utils/numberToWords';
@@ -15,6 +16,7 @@ import {
   createNewBlankInvoice,
   AppSettings,
   DEFAULT_SETTINGS,
+  getCatalogProducts,
 } from './utils/storage';
 import { VashishtLogo } from './components/VashishtLogo';
 import { InvoiceEditor } from './components/InvoiceEditor';
@@ -40,6 +42,7 @@ export default function App() {
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [saveToast, setSaveToast] = useState<string | null>(null);
+  const [catalogProducts, setCatalogProducts] = useState<CatalogProduct[]>(() => getCatalogProducts());
 
   // Initialize with FRESH and EMPTY invoice by default (Zero pre-loaded rows!)
   useEffect(() => {
@@ -49,6 +52,8 @@ export default function App() {
 
       const all = await getAllInvoices();
       setInvoices(all);
+
+      setCatalogProducts(getCatalogProducts());
 
       // Start with completely fresh empty invoice (items: [])
       const freshInvoice = createNewBlankInvoice(all, loadedSettings.invoicePrefix);
@@ -166,7 +171,7 @@ export default function App() {
       <header className="no-print bg-slate-950/70 backdrop-blur-xl border-b border-white/[0.08] sticky top-0 z-40 px-4 md:px-8 py-3.5 flex flex-wrap items-center justify-between gap-4 shrink-0 shadow-sm relative">
         {/* Left: Firm Title */}
         <div className="flex items-center gap-3.5">
-          <VashishtLogo size={34} variant="color" />
+          <VashishtLogo size={38} variant="color" />
           <div className="flex flex-col">
             <div className="flex items-center gap-2">
               <span className="text-base font-bold tracking-tight text-white whitespace-nowrap">
@@ -258,6 +263,7 @@ export default function App() {
             invoice={processedInvoice}
             onChange={handleInvoiceChange}
             onOpenPrintModal={() => setIsPrintModalOpen(true)}
+            catalogProducts={catalogProducts}
           />
         </div>
       </main>
@@ -270,11 +276,6 @@ export default function App() {
         hsnSummary={processedInvoice.hsnSummary}
         onSave={handleSaveInvoice}
       />
-
-      {/* 4. Dedicated Print Container for Direct window.print() */}
-      <div className="print-only hidden">
-        <InvoicePrintA4 invoice={processedInvoice} hsnSummary={processedInvoice.hsnSummary} />
-      </div>
 
       {/* Ancillary Modals */}
       <InvoiceHistoryModal
@@ -298,6 +299,7 @@ export default function App() {
         onClose={() => setIsSettingsOpen(false)}
         settings={settings}
         onSaveSettings={handleSaveSettings}
+        onCatalogChange={setCatalogProducts}
       />
 
       {/* Save Notification Toast */}

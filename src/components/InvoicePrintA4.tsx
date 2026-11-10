@@ -6,9 +6,14 @@ import { VashishtLogo } from './VashishtLogo';
 interface InvoicePrintA4Props {
   invoice: Invoice;
   hsnSummary: HSNSummaryRow[];
+  copyTitle?: string;
 }
 
-export const InvoicePrintA4: React.FC<InvoicePrintA4Props> = ({ invoice, hsnSummary }) => {
+export const InvoicePrintA4: React.FC<InvoicePrintA4Props> = ({
+  invoice,
+  hsnSummary,
+  copyTitle = 'ORIGINAL FOR RECIPIENT',
+}) => {
   const isIntraState = invoice.buyer.stateCode === VASHISHT_FIRM_PROFILE.stateCode;
 
   // Use verified Himachal Pradesh Gramin Bank details
@@ -29,7 +34,7 @@ export const InvoicePrintA4: React.FC<InvoicePrintA4Props> = ({ invoice, hsnSumm
   return (
     <div
       id="invoice-print-area"
-      className="printable-invoice bg-white text-black font-sans text-[11px] leading-tight select-text"
+      className="printable-invoice print-invoice-sheet bg-white text-black font-sans text-[11px] leading-tight select-text"
       style={{
         width: '210mm',
         minHeight: '297mm',
@@ -41,7 +46,9 @@ export const InvoicePrintA4: React.FC<InvoicePrintA4Props> = ({ invoice, hsnSumm
     >
       {/* Top Banner / Document Title */}
       <div className="border-b border-black text-center py-1 bg-neutral-100 flex items-center justify-between px-3">
-        <span className="text-[10px] font-semibold tracking-wider">GST TAX INVOICE (ORIGINAL FOR RECIPIENT)</span>
+        <span className="text-[10px] font-semibold tracking-wider">
+          GST TAX INVOICE ({copyTitle.toUpperCase()})
+        </span>
         <span className="text-[10px] font-bold tracking-widest uppercase">TAX INVOICE</span>
         <span className="text-[9px] text-neutral-600">STATE CODE: 02</span>
       </div>
@@ -51,8 +58,8 @@ export const InvoicePrintA4: React.FC<InvoicePrintA4Props> = ({ invoice, hsnSumm
         {/* Left Column: Seller Details (7 cols) */}
         <div className="col-span-7 border-r border-black p-2.5 flex flex-col justify-between">
           <div>
-            <div className="flex items-center gap-2.5 mb-1.5">
-              <VashishtLogo size={42} variant="color" />
+            <div className="flex items-center gap-3 mb-1.5">
+              <VashishtLogo size={46} variant="color" />
               <div>
                 <h1 className="text-[16px] font-black tracking-tight text-black leading-none uppercase">
                   {VASHISHT_FIRM_PROFILE.firmName}
@@ -264,8 +271,8 @@ export const InvoicePrintA4: React.FC<InvoicePrintA4Props> = ({ invoice, hsnSumm
           ))}
 
           {/* Fill empty visual space to maintain balanced A4 height */}
-          {Array.from({ length: Math.max(0, 7 - invoice.items.length) }).map((_, i) => (
-            <tr key={`empty_${i}`} className="h-6">
+          {Array.from({ length: Math.max(0, 4 - invoice.items.length) }).map((_, i) => (
+            <tr key={`empty_${i}`} className="h-5">
               <td className="border-r border-black"></td>
               <td className="border-r border-black"></td>
               <td className="border-r border-black"></td>

@@ -28,7 +28,34 @@ export const VASHISHT_FIRM_PROFILE: FirmProfile = {
   email: "rohitkumar87930@gmail.com",
 };
 
-export type UnitType = 'SQFT' | 'PCS' | 'MTR' | 'KGS' | 'NOS' | 'BOX' | 'SETS' | 'RFT';
+export type UnitType =
+  | 'SQFT'
+  | 'PCS'
+  | 'PKT'
+  | 'KG'
+  | 'LTR'
+  | 'DRUM'
+  | 'SET'
+  | 'SETS'
+  | 'TRIP'
+  | 'SHEET'
+  | 'BOX'
+  | 'MTR'
+  | 'KGS'
+  | 'NOS'
+  | 'RFT'
+  | 'OTH';
+
+export interface CatalogProduct {
+  id: string;
+  name: string;
+  hsn: string;
+  unit: UnitType;
+  rate: number;
+  isTaxInclusive: boolean;
+  taxRate: number;
+  category: string;
+}
 
 export interface PlywoodPreset {
   label: string;
@@ -57,9 +84,25 @@ export interface HSNPreset {
 
 export const HSN_PRESETS: HSNPreset[] = [
   {
+    code: '44092990',
+    category: 'Imported Timber',
+    description: 'Imported Timber / Thermo Pine',
+    defaultTaxRate: 18,
+    defaultUnit: 'SQFT',
+    isPlywood: true,
+  },
+  {
     code: '4412',
     category: 'Plywood & Blockboard',
     description: 'Plywood / Blockboard / Flush Core (Commercial/Marine)',
+    defaultTaxRate: 18,
+    defaultUnit: 'SQFT',
+    isPlywood: true,
+  },
+  {
+    code: '4408',
+    category: 'Veneer Sheets',
+    description: 'Veneer Sheets / Wood Veneers',
     defaultTaxRate: 18,
     defaultUnit: 'SQFT',
     isPlywood: true,
@@ -89,51 +132,75 @@ export const HSN_PRESETS: HSNPreset[] = [
     isPlywood: true,
   },
   {
-    code: '4823',
-    category: 'Decorative Laminates (Sunmica)',
-    description: 'Sunmica / Decorative Laminate Sheets (1mm / 0.8mm)',
-    defaultTaxRate: 18,
-    defaultUnit: 'SQFT',
-    isPlywood: true,
-  },
-  {
-    code: '3920',
-    category: 'PVC Edge Banding',
-    description: 'PVC Edge Banding Tape / Trims',
-    defaultTaxRate: 18,
-    defaultUnit: 'MTR',
-    isPlywood: false,
-  },
-  {
-    code: '3506',
-    category: 'Adhesives',
-    description: 'Wood Adhesive (Fevicol SH / Marine / Hetax)',
-    defaultTaxRate: 18,
-    defaultUnit: 'KGS',
-    isPlywood: false,
-  },
-  {
     code: '8302',
     category: 'Hardware & Fittings',
-    description: 'Auto Hinges / Telescopic Drawer Channels / Handles / Slim Box',
+    description: 'Hinges, Hardware, Fittings, Door Closers',
     defaultTaxRate: 18,
     defaultUnit: 'PCS',
     isPlywood: false,
   },
   {
-    code: '8301',
-    category: 'Locks & Cylinders',
-    description: 'Mortise Door Locks / Padlocks / Latches',
+    code: '7318',
+    category: 'Screws & Fasteners',
+    description: 'Screws, Bolts, Nuts',
     defaultTaxRate: 18,
-    defaultUnit: 'SETS',
+    defaultUnit: 'PKT',
     isPlywood: false,
   },
   {
-    code: '9403',
-    category: 'Wooden Furniture & Fittings',
-    description: 'Modular Kitchen Baskets & Hardware Units',
+    code: '7317',
+    category: 'Nails & Pins',
+    description: 'Nails, Pins, Wire Nails',
     defaultTaxRate: 18,
-    defaultUnit: 'NOS',
+    defaultUnit: 'KG',
+    isPlywood: false,
+  },
+  {
+    code: '3506',
+    category: 'Adhesives',
+    description: 'Adhesives, Fevicol Marine, Hetax',
+    defaultTaxRate: 18,
+    defaultUnit: 'KG',
+    isPlywood: false,
+  },
+  {
+    code: '4823',
+    category: 'Decorative Laminates (Sunmica)',
+    description: 'Sunmica / Decorative Laminates',
+    defaultTaxRate: 18,
+    defaultUnit: 'SHEET',
+    isPlywood: true,
+  },
+  {
+    code: '3920',
+    category: 'PVC Tape / Plastic Films',
+    description: 'PVC Tape / Plastic Films',
+    defaultTaxRate: 18,
+    defaultUnit: 'MTR',
+    isPlywood: false,
+  },
+  {
+    code: '3926',
+    category: 'PVC Gitti / Plastic Articles',
+    description: 'PVC Gitti / Plastic Articles',
+    defaultTaxRate: 18,
+    defaultUnit: 'PKT',
+    isPlywood: false,
+  },
+  {
+    code: '3919',
+    category: 'Masking Tape / Tapes',
+    description: 'Masking Tape / Self-Adhesive Tapes',
+    defaultTaxRate: 18,
+    defaultUnit: 'PCS',
+    isPlywood: false,
+  },
+  {
+    code: '996511',
+    category: 'Transportation Services',
+    description: 'Freight / Cartage / Transportation Services',
+    defaultTaxRate: 18,
+    defaultUnit: 'TRIP',
     isPlywood: false,
   },
 ];
